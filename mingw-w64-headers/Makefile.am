@@ -115,7 +115,6 @@ IDL_SRCS = \
   include/dwrite.idl \
   include/dwrite_1.idl \
   include/dwrite_2.idl \
-  include/dwrite_3.idl \
   include/dxgi.idl \
   include/dxgi1_2.idl \
   include/dxgi1_3.idl \
