@@ -15,7 +15,7 @@ int fegetenv (fenv_t * envp)
 {
 #if defined(_ARM_) || defined(__arm__)
   __asm__ volatile ("fmrx %0, FPSCR" : "=r" (*envp));
-#elif defined(_ARM64_) || defined(__aarch64__)
+#elif defined(_ARM64_) || defined(__aarch64__) || defined(_ARM64EC_) || defined(__arm64ec__)
   unsigned __int64 fpcr;
   __asm__ volatile ("mrs %0, fpcr" : "=r" (fpcr));
   envp->__cw = fpcr;
