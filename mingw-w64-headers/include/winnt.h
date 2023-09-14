@@ -9151,6 +9151,9 @@ DEFINE_ENUM_FLAG_OPERATORS(JOB_OBJECT_IO_RATE_CONTROL_FLAGS)
     NTSYSAPI VOID NTAPI RtlUnwindEx (FRAME_POINTERS TargetFrame, PVOID TargetIp, PEXCEPTION_RECORD ExceptionRecord, PVOID ReturnValue, PCONTEXT ContextRecord, PUNWIND_HISTORY_TABLE HistoryTable);
     NTSYSAPI ULONGLONG NTAPI RtlVirtualUnwind (ULONGLONG ImageBase, ULONGLONG ControlPc, PRUNTIME_FUNCTION FunctionEntry, PCONTEXT ContextRecord, PBOOLEAN InFunction, PFRAME_POINTERS EstablisherFrame, PKNONVOLATILE_CONTEXT_POINTERS ContextPointers);
 #endif
+#if defined(__arm64ec__)
+    NTSYSAPI BOOLEAN NTAPI RtlIsEcCode(DWORD64 CodePointer);
+#endif
 #endif
 
 #include <string.h>
