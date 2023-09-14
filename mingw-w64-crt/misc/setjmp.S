@@ -30,7 +30,7 @@ __MINGW_USYMBOL(__intrinsic_setjmp):
         xorl    %eax, %eax
         retl
 
-#elif defined(__x86_64__)
+#elif defined(__x86_64__) && !defined(__arm64ec__)
         .globl  __MINGW_USYMBOL(setjmp)
         .def    __MINGW_USYMBOL(setjmp); .scl 2; .type 32; .endef
 __MINGW_USYMBOL(setjmp):
@@ -112,6 +112,35 @@ __MINGW_USYMBOL(__intrinsic_setjmpex):
         stp     d10, d11, [x0, #0x90] /* jmp_buf->D[2-3] */
         stp     d12, d13, [x0, #0xa0] /* jmp_buf->D[4-5] */
         stp     d14, d15, [x0, #0xb0] /* jmp_buf->D[6-7] */
+        mov     x0,  #0
+        ret
+#elif defined(__arm64ec__)
+__MINGW_USYMBOL(__intrinsic_setjmp):
+        mov     x1,  #0
+__MINGW_USYMBOL(__intrinsic_setjmpex):
+        stp     x1,  x27, [x0]        /* jmp_buf->Frame, jmp_buf->Rbx */
+        mov     x2,  sp
+        stp     x2,  fp,  [x0, #0x10] /* jmp_buf->Rsp, jmp_buf->Rbp */
+        stp     x25, x26, [x0, #0x20] /* jmp_buf->Rsi, jmp_buf->Rdi */
+        stp     x19, x20, [x0, #0x30] /* jmp_buf->R12, jmp_buf->R13 */
+        stp     x21, x22, [x0, #0x40] /* jmp_buf->R14, jmp_buf->R15 */
+        str     lr,  [x0, #0x50]      /* jmp_buf->Rip */
+        stp     x0,  lr,  [sp, #-0x10]!
+        add     x1,  x0,  #0x58 /* jmp_buf->MxCsr */
+        mov     x0,  #0
+        mov     x2,  #0
+        blr     =__os_arm64x_get_x64_information /* (0, &jmp_buf->MxCsr, NULL) */
+        ldr     x1,  [sp]
+        add     x1,  x1,  #0x5c /* jmp_buf->FpCsr */
+        mov     x0,  #2
+        mov     x2,  #0
+        blr     =__os_arm64x_get_x64_information /* (2, &jmp_buf->FpCsr, NULL) */
+        ldp     x0,  lr,  [sp], #0x10
+        stp     q6,  q7,  [x0, #0x60] /* jmp_buf->Xmm[6-7] */
+        stp     q8,  q9,  [x0, #0x80] /* jmp_buf->Xmm[8-9] */
+        stp     q10, q11, [x0, #0xa0] /* jmp_buf->Xmm[10-11] */
+        stp     q12, q13, [x0, #0xc0] /* jmp_buf->Xmm[12-13] */
+        stp     q14, q15, [x0, #0xf0] /* jmp_buf->Xmm[14-15] */
         mov     x0,  #0
         ret
 #endif
