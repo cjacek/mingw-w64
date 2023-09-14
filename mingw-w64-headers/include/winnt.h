@@ -9266,14 +9266,14 @@ typedef DWORD (WINAPI *PRTL_RUN_ONCE_INIT_FN)(PRTL_RUN_ONCE, PVOID, PVOID *);
 #if !defined (__CRT__NO_INLINE) && !defined (__WIDL__)
     __CRT_INLINE PVOID WINAPI RtlSecureZeroMemory(PVOID ptr,SIZE_T cnt) {
       volatile char *vptr =(volatile char *)ptr;
-#ifdef __x86_64
+#if defined(__x86_64) && !defined(__arm64ec__)
       __stosb((PBYTE)((DWORD64)vptr),0,cnt);
 #else
       while(cnt) {
 	*vptr++ = 0;
 	cnt--;
       }
-#endif /* __x86_64 */
+#endif /* defined(__x86_64) && !defined(__arm64ec__) */
       return ptr;
     }
 #endif /* !__CRT__NO_INLINE // !__WIDL__ */
