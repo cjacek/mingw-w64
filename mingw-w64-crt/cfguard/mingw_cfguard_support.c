@@ -9,7 +9,7 @@
 // mingw-w64-crt itself, to allow linking to objects/libraries compiled with
 // CFGuard.
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(__arm64ec__)
 
 // The target address is passed as a parameter in an arch-specific manner,
 // however it is not specified how on x86_64 because __guard_dispatch_icall_fptr
@@ -29,7 +29,7 @@ __asm__(
 // jmp instruction is not included as a valid call target for CFGuard.
 extern void *__guard_dispatch_icall_dummy;
 
-#elif defined(__i386__) || defined(__aarch64__) || defined(__arm__)
+#elif defined(__i386__) || defined(__aarch64__) || defined(__arm__) || defined(__arm64ec__)
 
 // The target address is passed via %ecx (x86), X15 (aarch64) or R0 (arm),
 // but it doesn't really matter here because this is a no-op anyway.
@@ -51,7 +51,7 @@ __asm__(".section .00cfg,\"dr\"");
 __attribute__(( section (".00cfg") ))
 void *__guard_check_icall_fptr = &__guard_check_icall_dummy;
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(__arm64ec__)
 
 __attribute__(( section (".00cfg") ))
 void *__guard_dispatch_icall_fptr = &__guard_dispatch_icall_dummy;
