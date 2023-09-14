@@ -2,7 +2,8 @@ unsigned long __cdecl _byteswap_ulong (unsigned long _Long);
 
 unsigned long __cdecl _byteswap_ulong (unsigned long _Long)
 {
-#if defined(_AMD64_) || defined(__x86_64__) || defined(_X86_) || defined(__i386__)
+#if (defined(_AMD64_) && !defined(_ARM64EC_)) || (defined(__x86_64__) && !defined(__arm64ec__)) || \
+  defined(_X86_) || defined(__i386__)
   unsigned long retval;
   __asm__ __volatile__ ("bswapl %[retval]" : [retval] "=rm" (retval) : "[retval]" (_Long));
   return retval;
@@ -16,5 +17,6 @@ unsigned long __cdecl _byteswap_ulong (unsigned long _Long)
   b[1] = b[2];
   b[2] = tmp;
   return _Long;
-#endif /* defined(_AMD64_) || defined(__x86_64__) || defined(_X86_) || defined(__i386__) */
+#endif /* (defined(_AMD64_) && !defined(_ARM64EC_)) || (defined(__x86_64__) && !defined(__arm64ec__)) ||
+          defined(_X86_) || defined(__i386__) */
 }

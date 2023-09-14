@@ -2,7 +2,7 @@ unsigned long long __cdecl _byteswap_uint64(unsigned long long _Int64);
 
 unsigned long long __cdecl _byteswap_uint64(unsigned long long _Int64)
 {
-#if defined(_AMD64_) || defined(__x86_64__)
+#if (defined(_AMD64_) && !defined(_ARM64EC_)) || (defined(__x86_64__) && !defined(__arm64ec__))
   unsigned long long retval;
   __asm__ __volatile__ ("bswapq %[retval]" : [retval] "=rm" (retval) : "[retval]" (_Int64));
   return retval;

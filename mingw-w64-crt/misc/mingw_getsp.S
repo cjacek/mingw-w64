@@ -15,7 +15,7 @@
 	.globl __MINGW_USYMBOL(mingw_getsp)
 	.def	__MINGW_USYMBOL(mingw_getsp);	.scl	2;	.type	32;	.endef
 __MINGW_USYMBOL(mingw_getsp):
-#if defined(_AMD64_) || defined(__x86_64__)
+#if (defined(_AMD64_) && !defined(_ARM64EC_)) || (defined(__x86_64__) && !defined(__arm64ec__))
 	leaq  8(%rsp),%rax
 	ret
 #elif defined(_X86_) || defined(__i386__)
@@ -24,7 +24,7 @@ __MINGW_USYMBOL(mingw_getsp):
 #elif defined(_ARM_) || defined(__arm__)
 	mov	r0, sp
 	bx	lr
-#elif defined(_ARM64_) || defined(__aarch64__)
+#elif defined(_ARM64_) || defined(__aarch64__) || defined(_ARM64EC_) || defined(__arm64ec__)
 	mov	x0, sp
 	ret
 #endif
