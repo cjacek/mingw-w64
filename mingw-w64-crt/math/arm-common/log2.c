@@ -47,7 +47,8 @@ float log2f(float x)
 
 long double log2l(long double x)
 {
-#if defined(__arm__) || defined(_ARM_) || defined(__aarch64__) || defined(_ARM64_)
+#if defined(__arm__) || defined(_ARM_) || defined(__aarch64__) || defined(_ARM64_) || \
+    defined(__arm64ec__) || defined(_ARM64EC_)
     return log2(x);
 #else
 #error Not supported on your platform yet

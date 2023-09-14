@@ -108,7 +108,8 @@ Copyright 1984, 1995 by Stephen L. Moshier
 
 long double erfl(long double x);
 
-#if defined(__arm__) || defined(_ARM_) || defined(__aarch64__) || defined(_ARM64_)
+#if defined(__arm__) || defined(_ARM_) || defined(__aarch64__) || defined(_ARM64_) || \
+    defined(__arm64ec__) || defined(_ARM64EC_)
 long double erfcl(long double x)
 {
 	return erfc(x);
