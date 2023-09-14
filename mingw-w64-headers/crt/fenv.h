@@ -8,7 +8,7 @@
 
 #include <crtdefs.h>
 
-#if defined(_ARM_) || defined(__arm__) || defined(_ARM64_) || defined(__aarch64__)
+#if defined(_ARM_) || defined(__arm__) || defined(_ARM64_) || defined(__aarch64__) || defined(_ARM64EC_) || defined(__arm64ec__)
 
 /* FPU status word exception flags */
 #define FE_INVALID      0x01
@@ -60,7 +60,7 @@
 
 #ifndef RC_INVOKED
 
-#if defined(_ARM_) || defined(__arm__) || defined(_ARM64_) || defined(__aarch64__)
+#if defined(_ARM_) || defined(__arm__) || defined(_ARM64_) || defined(__aarch64__) || defined(_ARM64EC_) || defined(__arm64ec__)
 
 /* Type representing exception flags. */
 typedef unsigned int fexcept_t;
