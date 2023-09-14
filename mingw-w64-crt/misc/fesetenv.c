@@ -30,7 +30,7 @@ int fesetenv (const fenv_t * envp)
     _fpreset();
   else
     __asm__ volatile ("fmxr FPSCR, %0" : : "r" (*envp));
-#elif defined(_ARM64_) || defined(__aarch64__)
+#elif defined(_ARM64_) || defined(__aarch64__) || defined(_ARM64EC_) || defined(__arm64ec__)
   if (envp == FE_DFL_ENV) {
     /* Use the choice made at app startup */
     _fpreset();

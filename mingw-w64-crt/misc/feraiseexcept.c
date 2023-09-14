@@ -20,7 +20,7 @@ int feraiseexcept (int excepts)
   __asm__ volatile ("fmrx %0, FPSCR" : "=r" (_env));
   _env.__cw |= excepts & FE_ALL_EXCEPT;
   __asm__ volatile ("fmxr FPSCR, %0" : : "r" (_env));
-#elif defined(_ARM64_) || defined(__aarch64__)
+#elif defined(_ARM64_) || defined(__aarch64__) || defined(_ARM64EC_) || defined(__arm64ec__)
   unsigned __int64 fpcr;
   (void) _env;
   __asm__ volatile ("mrs %0, fpcr" : "=r" (fpcr));
@@ -31,6 +31,6 @@ int feraiseexcept (int excepts)
   _env.__status_word |= excepts & FE_ALL_EXCEPT;
   __asm__ volatile ("fldenv %0;"
 		    "fwait;" : : "m" (_env));
-#endif /* defined(_ARM_) || defined(__arm__) || defined(_ARM64_) || defined(__aarch64__) */
+#endif /* defined(_ARM_) || defined(__arm__) || defined(_ARM64_) || defined(__aarch64__) || defined(_ARM64EC_) || defined(__arm64ec__) */
   return 0;
 }
