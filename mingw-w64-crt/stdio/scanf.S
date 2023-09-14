@@ -25,7 +25,7 @@
              expanded as variadic arguments when calling func
 */
 
-#if defined (__x86_64__)
+#if defined (__x86_64__) && !defined(__arm64ec__)
 
     .text
     .align 16
@@ -200,7 +200,7 @@ __argtos:
     add     sp, sp, r8, lsl #2
     pop     {r4-r8, pc}
 
-#elif defined (__aarch64__)
+#elif defined (__aarch64__) || defined(__arm64ec__)
 
     .text
     .align 2
