@@ -735,12 +735,6 @@ __MINGW_CXX14_CONSTEXPR inline ENUMTYPE& operator ^= (ENUMTYPE& a, ENUMTYPE b) {
 #define RTL_BITS_OF_FIELD(type,field) (RTL_BITS_OF(RTL_FIELD_TYPE(type,field)))
 #define CONTAINING_RECORD(address,type,field) ((type *)((PCHAR)(address) - (ULONG_PTR)(&((type *)0)->field)))
 
-    typedef EXCEPTION_DISPOSITION NTAPI EXCEPTION_ROUTINE (struct _EXCEPTION_RECORD *ExceptionRecord, PVOID EstablisherFrame, struct _CONTEXT *ContextRecord, PVOID DispatcherContext);
-#ifndef __PEXCEPTION_ROUTINE_DEFINED
-#define __PEXCEPTION_ROUTINE_DEFINED
-    typedef EXCEPTION_ROUTINE *PEXCEPTION_ROUTINE;
-#endif
-
 #define ENCLAVE_SHORT_ID_LENGTH             16
 #define ENCLAVE_LONG_ID_LENGTH              32
 
@@ -2091,26 +2085,6 @@ extern "C" {
 #define UNW_FLAG_EHANDLER   0x1
 #define UNW_FLAG_UHANDLER   0x2
 
-  struct _DISPATCHER_CONTEXT;
-  typedef struct _DISPATCHER_CONTEXT DISPATCHER_CONTEXT;
-  typedef struct _DISPATCHER_CONTEXT *PDISPATCHER_CONTEXT;
-
-  struct _DISPATCHER_CONTEXT {
-    ULONG ControlPc;
-    ULONG ImageBase;
-    PRUNTIME_FUNCTION FunctionEntry;
-    ULONG EstablisherFrame;
-    ULONG TargetPc;
-    PCONTEXT ContextRecord;
-    PEXCEPTION_ROUTINE LanguageHandler;
-    PVOID HandlerData;
-    struct _UNWIND_HISTORY_TABLE *HistoryTable;
-    ULONG ScopeIndex;
-    BOOLEAN ControlPcIsUnwound;
-    PBYTE NonVolatileRegisters;
-    ULONG VirtualVfpHead;
-  };
-
   typedef struct _KNONVOLATILE_CONTEXT_POINTERS {
     PDWORD R4;
     PDWORD R5;
@@ -2213,28 +2187,46 @@ extern "C" {
 #define EXCEPTION_READ_FAULT    0
 #define EXCEPTION_WRITE_FAULT   1
 #define EXCEPTION_EXECUTE_FAULT 8
+#endif /* defined(_ARM64_) || defined(_ARM64EC_) */
 
 #if !defined(RC_INVOKED)
 
-#define CONTEXT_ARM64           0x400000
-#define CONTEXT_CONTROL         (CONTEXT_ARM64 | 0x00000001)
-#define CONTEXT_INTEGER         (CONTEXT_ARM64 | 0x00000002)
-#define CONTEXT_FLOATING_POINT  (CONTEXT_ARM64 | 0x00000004)
-#define CONTEXT_DEBUG_REGISTERS (CONTEXT_ARM64 | 0x00000008)
+#define CONTEXT_ARM64                 0x400000
+#define CONTEXT_ARM64_CONTROL         (CONTEXT_ARM64 | 0x00000001)
+#define CONTEXT_ARM64_INTEGER         (CONTEXT_ARM64 | 0x00000002)
+#define CONTEXT_ARM64_FLOATING_POINT  (CONTEXT_ARM64 | 0x00000004)
+#define CONTEXT_ARM64_DEBUG_REGISTERS (CONTEXT_ARM64 | 0x00000008)
+#define CONTEXT_ARM64_X18             (CONTEXT_ARM64 | 0x00000010)
 
-#define CONTEXT_FULL (CONTEXT_CONTROL | CONTEXT_INTEGER)
-#define CONTEXT_ALL  (CONTEXT_CONTROL | CONTEXT_INTEGER | CONTEXT_FLOATING_POINT | CONTEXT_DEBUG_REGISTERS)
 
-#define EXCEPTION_READ_FAULT    0
-#define EXCEPTION_WRITE_FAULT   1
-#define EXCEPTION_EXECUTE_FAULT 8
+#define CONTEXT_ARM64_FULL (CONTEXT_ARM64_CONTROL | CONTEXT_ARM64_INTEGER | CONTEXT_ARM64_FLOATING_POINT)
+#define CONTEXT_ARM64_ALL  (CONTEXT_ARM64_CONTROL | CONTEXT_ARM64_INTEGER | CONTEXT_ARM64_FLOATING_POINT | CONTEXT_ARM64_DEBUG_REGISTERS | CONTEXT_ARM64_X18)
+
+#define CONTEXT_ARM64_UNWOUND_TO_CALL 0x20000000
+
+#ifdef _ARM64_
+
+#define CONTEXT_CONTROL         CONTEXT_ARM64_CONTROL
+#define CONTEXT_INTEGER         CONTEXT_ARM64_INTEGER
+#define CONTEXT_FLOATING_POINT  CONTEXT_ARM64_FLOATING_POINT
+#define CONTEXT_DEBUG_REGISTERS CONTEXT_ARM64_DEBUG_REGISTERS
+#define CONTEXT_FULL            CONTEXT_ARM64_FULL
+#define CONTEXT_ALL             CONTEXT_ARM64_ALL
+#define CONTEXT_UNWOUND_TO_CALL CONTEXT_ARM64_UNWOUND_TO_CALL
+
+#define CONTEXT_EXCEPTION_ACTIVE    0x08000000
+#define CONTEXT_SERVICE_ACTIVE      0x10000000
+#define CONTEXT_EXCEPTION_REQUEST   0x40000000
+#define CONTEXT_EXCEPTION_REPORTING 0x80000000
+
+#endif /* _ARM64_ */
+
+#endif /* !defined(RC_INVOKED) */
 
 #define ARM64_MAX_BREAKPOINTS   8
 #define ARM64_MAX_WATCHPOINTS   2
 
-#endif /* !defined(RC_INVOKED) */
-
-  typedef union _NEON128 {
+  typedef union _ARM64_NT_NEON128 {
     struct
     {
         ULONGLONG Low;
@@ -2244,9 +2236,13 @@ extern "C" {
     float S[4];
     WORD  H[8];
     BYTE  B[16];
-  } NEON128, *PNEON128;
+  } ARM64_NT_NEON128, *PARM64_NT_NEON128;
 
-  typedef struct DECLSPEC_ALIGN(16) _CONTEXT {
+#ifdef _ARM64_
+  typedef ARM64_NT_NEON128 NEON128, *PNEON128;
+#endif // _ARM64_
+
+  typedef struct DECLSPEC_ALIGN(16) _ARM64_NT_CONTEXT {
     ULONG ContextFlags;                 /* 000 */
     /* CONTEXT_INTEGER */
     ULONG Cpsr;                         /* 004 */
@@ -2292,7 +2288,7 @@ extern "C" {
     DWORD64 Sp;                         /* 100 */
     DWORD64 Pc;                         /* 108 */
     /* CONTEXT_FLOATING_POINT */
-    NEON128 V[32];                      /* 110 */
+    ARM64_NT_NEON128 V[32];             /* 110 */
     DWORD Fpcr;                         /* 310 */
     DWORD Fpsr;                         /* 314 */
     /* CONTEXT_DEBUG_REGISTERS */
@@ -2300,35 +2296,25 @@ extern "C" {
     DWORD64 Bvr[ARM64_MAX_BREAKPOINTS]; /* 338 */
     DWORD Wcr[ARM64_MAX_WATCHPOINTS];   /* 378 */
     DWORD64 Wvr[ARM64_MAX_WATCHPOINTS]; /* 380 */
-  } CONTEXT, *PCONTEXT;
+  } ARM64_NT_CONTEXT, *PARM64_NT_CONTEXT;
 
+#ifdef _ARM64_
+  typedef ARM64_NT_CONTEXT CONTEXT, *PCONTEXT;
+#endif // _ARM64_
+
+
+  typedef struct _IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY ARM64_RUNTIME_FUNCTION, *PARM64_RUNTIME_FUNCTION;
+
+#ifdef _ARM64_
   typedef struct _IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY RUNTIME_FUNCTION, *PRUNTIME_FUNCTION;
   typedef PRUNTIME_FUNCTION (*PGET_RUNTIME_FUNCTION_CALLBACK)(DWORD64 ControlPc,PVOID Context);
+#endif // _ARM64_
 
 #define UNW_FLAG_NHANDLER   0x0
 #define UNW_FLAG_EHANDLER   0x1
 #define UNW_FLAG_UHANDLER   0x2
 
-  struct _DISPATCHER_CONTEXT;
-  typedef struct _DISPATCHER_CONTEXT DISPATCHER_CONTEXT;
-  typedef struct _DISPATCHER_CONTEXT *PDISPATCHER_CONTEXT;
-
-  struct _DISPATCHER_CONTEXT {
-    ULONG_PTR ControlPc;
-    ULONG_PTR ImageBase;
-    PRUNTIME_FUNCTION FunctionEntry;
-    ULONG_PTR EstablisherFrame;
-    ULONG_PTR TargetPc;
-    PCONTEXT ContextRecord;
-    PEXCEPTION_ROUTINE LanguageHandler;
-    PVOID HandlerData;
-    struct _UNWIND_HISTORY_TABLE *HistoryTable;
-    ULONG ScopeIndex;
-    BOOLEAN ControlPcIsUnwound;
-    PBYTE NonVolatileRegisters;
-  };
-
-  typedef struct _KNONVOLATILE_CONTEXT_POINTERS {
+  typedef struct _KNONVOLATILE_CONTEXT_POINTERS_ARM64 {
     PDWORD64 X19;
     PDWORD64 X20;
     PDWORD64 X21;
@@ -2350,12 +2336,13 @@ extern "C" {
     PDWORD64 D13;
     PDWORD64 D14;
     PDWORD64 D15;
-  } KNONVOLATILE_CONTEXT_POINTERS, *PKNONVOLATILE_CONTEXT_POINTERS;
+  } KNONVOLATILE_CONTEXT_POINTERS_ARM64, *PKNONVOLATILE_CONTEXT_POINTERS_ARM64;
+
+#ifdef _ARM64_
+  typedef KNONVOLATILE_CONTEXT_POINTERS_ARM64 KNONVOLATILE_CONTEXT_POINTERS, *PKNONVOLATILE_CONTEXT_POINTERS;
+#endif // _ARM64_
 
 #define OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME "OutOfProcessFunctionTableCallback"
-
-#endif /* _ARM64_ */
-
 
 #ifdef _X86_
 
@@ -2944,6 +2931,54 @@ __buildmemorybarrier()
 #ifdef __ia64__
     NTSYSAPI VOID NTAPI RtlUnwind2 (FRAME_POINTERS TargetFrame, PVOID TargetIp, PEXCEPTION_RECORD ExceptionRecord, PVOID ReturnValue, PCONTEXT ContextRecord);
 #endif
+
+    typedef EXCEPTION_DISPOSITION NTAPI EXCEPTION_ROUTINE (struct _EXCEPTION_RECORD *ExceptionRecord, PVOID EstablisherFrame, CONTEXT *ContextRecord, PVOID DispatcherContext);
+#ifndef __PEXCEPTION_ROUTINE_DEFINED
+#define __PEXCEPTION_ROUTINE_DEFINED
+    typedef EXCEPTION_ROUTINE *PEXCEPTION_ROUTINE;
+#endif
+
+#ifdef _ARM_
+  struct _DISPATCHER_CONTEXT;
+  typedef struct _DISPATCHER_CONTEXT DISPATCHER_CONTEXT;
+  typedef struct _DISPATCHER_CONTEXT *PDISPATCHER_CONTEXT;
+
+  struct _DISPATCHER_CONTEXT {
+    ULONG ControlPc;
+    ULONG ImageBase;
+    PRUNTIME_FUNCTION FunctionEntry;
+    ULONG EstablisherFrame;
+    ULONG TargetPc;
+    PCONTEXT ContextRecord;
+    PEXCEPTION_ROUTINE LanguageHandler;
+    PVOID HandlerData;
+    struct _UNWIND_HISTORY_TABLE *HistoryTable;
+    ULONG ScopeIndex;
+    BOOLEAN ControlPcIsUnwound;
+    PBYTE NonVolatileRegisters;
+    ULONG VirtualVfpHead;
+  };
+#endif
+
+  typedef struct _DISPATCHER_CONTEXT_ARM64 {
+    ULONG_PTR ControlPc;
+    ULONG_PTR ImageBase;
+    PARM64_RUNTIME_FUNCTION FunctionEntry;
+    ULONG_PTR EstablisherFrame;
+    ULONG_PTR TargetPc;
+    PARM64_NT_CONTEXT ContextRecord;
+    PEXCEPTION_ROUTINE LanguageHandler;
+    PVOID HandlerData;
+    struct _UNWIND_HISTORY_TABLE *HistoryTable;
+    ULONG ScopeIndex;
+    BOOLEAN ControlPcIsUnwound;
+    PBYTE NonVolatileRegisters;
+  } DISPATCHER_CONTEXT_ARM64, *PDISPATCHER_CONTEXT_ARM64;
+
+#if defined(_ARM64_)
+  typedef DISPATCHER_CONTEXT_ARM64 DISPATCHER_CONTEXT, *PDISPATCHER_CONTEXT;
+#endif // defined(_ARM64_)
+
 
 #ifdef __x86_64__
   /* http://msdn.microsoft.com/en-us/library/b6sf5kbd(VS.80).aspx */
