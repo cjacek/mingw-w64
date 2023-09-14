@@ -20,7 +20,7 @@ __MINGW_USYMBOL(longjmp):
         movl    16(%ecx),%esp        /* jmp_buf.Esp */
         addl    $4,%esp              /* get rid of return address */
         jmp     *20(%ecx)            /* jmp_buf.Eip */
-#elif defined(__x86_64__)
+#elif defined(__x86_64__) && !defined(__arm64ec__)
         movq    %rdx,%rax            /* retval */
         movq    0x8(%rcx),%rbx       /* jmp_buf->Rbx */
         movq    0x18(%rcx),%rbp      /* jmp_buf->Rbp */
@@ -86,6 +86,23 @@ __MINGW_USYMBOL(longjmp):
         ldp     d10, d11, [x0, #0x90] /* jmp_buf->D[2-3] */
         ldp     d12, d13, [x0, #0xa0] /* jmp_buf->D[4-5] */
         ldp     d14, d15, [x0, #0xb0] /* jmp_buf->D[6-7] */
+        mov     x0,  x1               /* retval */
+        ret
+#elif defined(__arm64ec__)
+        ldp     x27, x2,  [x0, #0x08] /* jmp_buf->Rbx, jmp_buf->Rsp */
+        mov     sp,  x2
+        ldp     fp,  x25, [x0, #0x18] /* jmp_buf->Rbp, jmp_buf->Rsi */
+        ldp     x26, x19, [x0, #0x28] /* jmp_buf->Rdi, jmp_buf->R12 */
+        ldp     x20, x21, [x0, #0x38] /* jmp_buf->R13, jmp_buf->R14 */
+        ldp     x22, lr,  [x0, #0x48] /* jmp_buf->R15, jmp_buf->Rip */
+
+        /* TODO: MXCSR */
+
+        ldp     q6,  q7,  [x0, #0x60] /* jmp_buf->Xmm[6-7] */
+        ldp     q8,  q9,  [x0, #0x80] /* jmp_buf->Xmm[8-9] */
+        ldp     q10, q11, [x0, #0xa0] /* jmp_buf->Xmm[10-11] */
+        ldp     q12, q13, [x0, #0xc0] /* jmp_buf->Xmm[12-13] */
+        ldp     q14, q15, [x0, #0xf0] /* jmp_buf->Xmm[14-15] */
         mov     x0,  x1               /* retval */
         ret
 #endif
