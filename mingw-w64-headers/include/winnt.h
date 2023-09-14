@@ -10351,7 +10351,7 @@ typedef DWORD (WINAPI *PRTL_RUN_ONCE_INIT_FN)(PRTL_RUN_ONCE, PVOID, PVOID *);
     FORCEINLINE VOID TpDestroyCallbackEnviron (PTP_CALLBACK_ENVIRON cbe) { UNREFERENCED_PARAMETER (cbe); }
 #endif
 
-#if defined(__x86_64) && !defined (__WIDL__)
+#if defined(__x86_64) && !defined (__arm64ec__) && !defined (__WIDL__)
     struct _TEB *NtCurrentTeb(VOID);
     PVOID GetCurrentFiber(VOID);
     PVOID GetFiberData(VOID);
@@ -10373,7 +10373,7 @@ typedef DWORD (WINAPI *PRTL_RUN_ONCE_INIT_FN)(PRTL_RUN_ONCE, PVOID, PVOID *);
     FORCEINLINE PVOID GetFiberData (VOID) { return *(PVOID *)GetCurrentFiber (); }
 #endif /* arm */
 
-#if defined (__aarch64__) && !defined (__WIDL__)
+#if (defined (__aarch64__) || defined (__arm64ec__)) && !defined (__WIDL__)
     struct _TEB *NtCurrentTeb (VOID);
     PVOID GetCurrentFiber (VOID);
     PVOID GetFiberData (VOID);
@@ -10382,7 +10382,7 @@ typedef DWORD (WINAPI *PRTL_RUN_ONCE_INIT_FN)(PRTL_RUN_ONCE, PVOID, PVOID *);
     return teb; }
     FORCEINLINE PVOID GetCurrentFiber(VOID) { return (PVOID)(((PNT_TIB)NtCurrentTeb())->FiberData); }
     FORCEINLINE PVOID GetFiberData (VOID) { return *(PVOID *)GetCurrentFiber (); }
-#endif /* aarch64 */
+#endif /* aarch64 || arm64ec */
 
 #ifndef _NTTMAPI_
 #define _NTTMAPI_
