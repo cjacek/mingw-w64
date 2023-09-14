@@ -8,7 +8,7 @@
 int
 __isnanl (long double _x)
 {
-#if defined(__x86_64__) || defined(_AMD64_)
+#if (defined(_AMD64_) && !defined(_ARM64EC_)) || (defined(__x86_64__) && !defined(__arm64ec__))
   __mingw_ldbl_type_t ld;
   int xx, signexp;
 
@@ -18,8 +18,9 @@ __isnanl (long double _x)
   signexp |= (unsigned int) (xx | (-xx)) >> 31;
   signexp = 0xfffe - signexp;
   return (int) ((unsigned int) signexp) >> 16;
-#elif defined(__arm__) || defined(_ARM_) || defined(__aarch64__) || defined(_ARM64_)
-    return __isnan(_x);
+#elif defined(__arm__) || defined(_ARM_) || defined(__aarch64__) || defined(_ARM64_) || \
+  defined(__arm64ec__) || defined(_ARM64EC_)
+  return __isnan(_x);
 #elif defined(__i386__) || defined(_X86_)
   unsigned short _sw;
   __asm__ __volatile__ ("fxam;"

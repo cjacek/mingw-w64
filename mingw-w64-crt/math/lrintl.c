@@ -8,9 +8,10 @@
 long lrintl (long double x) 
 {
   long retval = 0l;
-#if defined(_AMD64_) || defined(__x86_64__) || defined(_X86_) || defined(__i386__)
+#if (defined(_AMD64_) && !defined(_ARM64EC_)) || (defined(__x86_64__) && !defined(__arm64ec__)) || \
+  defined(_X86_) || defined(__i386__)
   __asm__ __volatile__ ("fistpl %0"  : "=m" (retval) : "t" (x) : "st");
-#elif defined(__arm__) || defined(_ARM_) || defined(__aarch64__) || defined(_ARM64_)
+#elif defined(__arm__) || defined(_ARM_) || defined(__aarch64__) || defined(_ARM64_) || defined(__arm64ec__) || defined(_ARM64EC_)
     retval = lrint(x);
 #endif
   return retval;

@@ -77,13 +77,14 @@ __FLT_ABI (sqrt) (__FLT_TYPE x)
 #else
   asm volatile ("fsqrtd %[dst], %[src];\n" : [dst] "=w" (res) : [src] "w" (x));
 #endif
-#elif defined(__aarch64__) || defined(_ARM64_)
+#elif defined(__aarch64__) || defined(_ARM64_) || defined(__arm64ec__) || defined(_ARM64EC_)
 #if _NEW_COMPLEX_FLOAT
   asm volatile ("fsqrt %s[dst], %s[src]\n" : [dst] "=w" (res) : [src] "w" (x));
 #else
   asm volatile ("fsqrt %d[dst], %d[src]\n" : [dst] "=w" (res) : [src] "w" (x));
 #endif
-#elif defined(_X86_) || defined(__i386__) || defined(_AMD64_) || defined(__x86_64__)
+#elif (defined(_AMD64_) && !defined(_ARM64EC_)) || (defined(__x86_64__) && !defined(__arm64ec__)) || \
+  defined(_X86_) || defined(__i386__)
   asm volatile ("fsqrt" : "=t" (res) : "0" (x));
 #else
 #error Not supported on your platform yet

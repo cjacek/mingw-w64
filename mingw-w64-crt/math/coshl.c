@@ -5,7 +5,8 @@
  */
 #include "cephes_mconf.h"
 
-#if defined(_ARM_) || defined(__arm__) || defined(_ARM64_) || defined(__aarch64__)
+#if defined(_ARM_) || defined(__arm__) || defined(_ARM64_) || defined(__aarch64__) || \
+    defined(_ARM64EC_) || defined(__arm64ec__)
 #include <math.h>
 
 long double coshl(long double x)

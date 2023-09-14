@@ -16,7 +16,8 @@ const union _ieee_rep __DENORML = { __LONG_DOUBLE_DENORM_REP };
 long double nanl (const char *);
 long double nanl (const char * tagp __attribute__((unused)) )
 {
-#if defined(__arm__) || defined(_ARM_) || defined(__aarch64__) || defined(_ARM64_)
+#if defined(__arm__) || defined(_ARM_) || defined(__aarch64__) || defined(_ARM64_) || \
+    defined(__arm64ec__) || defined(_ARM64EC_)
   return nan("");
 #else
   return __QNANL.ldouble_val;

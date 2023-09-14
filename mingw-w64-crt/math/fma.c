@@ -17,7 +17,7 @@ double fma(double x, double y, double z){
   return z;
 }
 
-#elif defined(_ARM64_) || defined(__aarch64__)
+#elif defined(_ARM64_) || defined(__aarch64__) || defined(_ARM64EC_) || defined(__arm64ec__)
 
 /* Use hardware FMA on ARM64. */
 double fma(double x, double y, double z){
@@ -29,7 +29,8 @@ double fma(double x, double y, double z){
   return z;
 }
 
-#elif defined(_AMD64_) || defined(__x86_64__) || defined(_X86_) || defined(__i386__)
+#elif (defined(_AMD64_) && !defined(_ARM64EC_)) || (defined(__x86_64__) && !defined(__arm64ec__)) || \
+  defined(_X86_) || defined(__i386__)
 
 #include <math.h>
 #include <stdint.h>
