@@ -1,0 +1,98 @@
+/**
+ * This file has no copyright assigned and is placed in the Public Domain.
+ * This file is part of the mingw-w64 runtime package.
+ * No warranty is given; refer to the file DISCLAIMER.PD within this package.
+ */
+
+#if defined(__arm64ec__)
+
+#define PTR .8byte
+#define ALIGN 16
+#define EXPORT_SYM(x) .globl x; x:
+
+/*
+These symbols are updated at runtime by the dynamic linker to point to emulator
+helper routines.
+*/
+	.section	.00cfg, "dr"
+	.balign ALIGN
+EXPORT_SYM(__os_arm64x_dispatch_call_no_redirect)
+	PTR 0
+EXPORT_SYM(__os_arm64x_dispatch_ret)
+	PTR 0
+EXPORT_SYM(__os_arm64x_check_icall)
+EXPORT_SYM(__os_arm64x_dispatch_icall)
+	PTR 0
+EXPORT_SYM(__os_arm64x_check_call)
+EXPORT_SYM(__os_arm64x_dispatch_call)
+	PTR 0
+EXPORT_SYM(__os_arm64x_check_icall_cfg)
+EXPORT_SYM(__os_arm64x_check_dispatch_cfg)
+	PTR 0
+EXPORT_SYM(__os_arm64x_rdtsc)
+EXPORT_SYM(__os_arm64x_get_x64_information)
+	PTR 0
+EXPORT_SYM(__os_arm64x_set_x64_information)
+EXPORT_SYM(__os_arm64x_cpuidex)
+	PTR 0
+EXPORT_SYM(__os_arm64x_x64_jump)
+EXPORT_SYM(__os_arm64x_dispatch_fptr)
+	PTR 0
+EXPORT_SYM(__os_arm64x_helper0)
+	PTR 0
+EXPORT_SYM(__os_arm64x_helper1)
+	PTR 0
+EXPORT_SYM(__os_arm64x_helper2)
+	PTR 0
+EXPORT_SYM(__os_arm64x_helper3)
+	PTR 0
+EXPORT_SYM(__os_arm64x_helper4)
+	PTR 0
+EXPORT_SYM(__os_arm64x_helper5)
+	PTR 0
+EXPORT_SYM(__os_arm64x_helper6)
+	PTR 0
+EXPORT_SYM(__os_arm64x_helper7)
+	PTR 0
+EXPORT_SYM(__os_arm64x_helper8)
+	PTR 0
+
+/*
+This structure is read at runtime by the dynamic linker on ARM64EC to configure
+metadata necessary for EC code to interface with x86_64 code.
+*/
+	.section	.rdata,"dr"
+	.balign ALIGN
+EXPORT_SYM(__chpe_metadata)	
+	.4byte 1 /* Version */
+	.4byte __hybrid_code_map@IMGREL /* CodeMap */
+	.4byte __hybrid_code_map_count /* CodeMapCount */
+	.4byte __x64_code_ranges_to_entry_points@IMGREL /* CodeRangesToEntryPoints */
+	.4byte __arm64x_redirection_metadata@IMGREL /* RedirectionMetadata */
+	.4byte __os_arm64x_dispatch_call_no_redirect@IMGREL /* __os_arm64x_dispatch_call_no_redirect */
+	.4byte __os_arm64x_dispatch_ret@IMGREL /* __os_arm64x_dispatch_ret */
+	.4byte __os_arm64x_check_call@IMGREL /* __os_arm64x_dispatch_call */
+	.4byte __os_arm64x_check_icall@IMGREL /* __os_arm64x_dispatch_icall */
+	.4byte __os_arm64x_check_icall_cfg@IMGREL /* __os_arm64x_dispatch_icall_cfg */
+	.4byte __arm64x_native_entrypoint@IMGREL /* AlternateEntryPoint */
+	.4byte __hybrid_auxiliary_iat@IMGREL /* AuxiliaryIAT */
+	.4byte __x64_code_ranges_to_entry_points_count /* CodeRangesToEntryPointsCount */
+	.4byte __arm64x_redirection_metadata_count /* RedirectionMetadataCount */
+	.4byte __os_arm64x_get_x64_information@IMGREL /* GetX64InformationFunctionPointer */
+	.4byte __os_arm64x_set_x64_information@IMGREL /* SetX64InformationFunctionPointer */
+	.4byte __arm64x_extra_rfe_table@IMGREL /* ExtraRFETable */
+	.4byte __arm64x_extra_rfe_table_size /* ExtraRFETableSize */
+	.4byte __os_arm64x_x64_jump@IMGREL /* __os_arm64x_dispatch_fptr */
+	.4byte __hybrid_auxiliary_iat_copy@IMGREL /* AuxiliaryIATCopy */
+	/* The following members are undocumented */
+	.4byte __os_arm64x_helper0@IMGREL
+	.4byte __os_arm64x_helper1@IMGREL
+	.4byte __os_arm64x_helper2@IMGREL
+	.4byte __os_arm64x_helper3@IMGREL
+	.4byte __os_arm64x_helper4@IMGREL
+	.4byte __os_arm64x_helper5@IMGREL
+	.4byte __os_arm64x_helper6@IMGREL
+	.4byte __os_arm64x_helper7@IMGREL
+	.4byte __os_arm64x_helper8@IMGREL
+
+#endif

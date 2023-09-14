@@ -7,7 +7,7 @@
 /*
 This assembly source file defines the `_load_config_used` structure, which is
 purely data. The main purpose is to include the metadata necessary for enabling
-Control Flow Guard (CFGuard).
+Control Flow Guard (CFGuard) and ARM64EC.
 
 Many of the symbols referenced here are supplied by the linker. This file has
 been constructed with LLVM/LLD in mind.
@@ -23,7 +23,7 @@ been constructed with LLVM/LLD in mind.
 #  error "Load config structure is unimplemented for the current architecture."
 #endif
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(__arm64ec__)
 /*
 GuardCFCheckDispatch is only used on x86_64. For other platforms it should be 0.
 Ref: https://docs.microsoft.com/en-us/windows/win32/secbp/pe-metadata
@@ -99,7 +99,11 @@ SYM(_load_config_used):
 	PTR	SYM(__guard_longjmp_table) /* GuardLongJumpTargetTable */
 	PTR	SYM(__guard_longjmp_count) /* GuardLongJumpTargetCount */
 	PTR	0 /* DynamicValueRelocTable */
+#if defined(__arm64ec__)
+	PTR	SYM(__chpe_metadata) /* CHPEMetadataPointer */
+#else
 	PTR	0 /* CHPEMetadataPointer */
+#endif
 	PTR	0 /* GuardRFFailureRoutine */
 	PTR	0 /* GuardRFFailureRoutineFunctionPointer */
 	.4byte	0 /* DynamicValueRelocTableOffset */
