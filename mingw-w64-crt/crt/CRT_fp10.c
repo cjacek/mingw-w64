@@ -11,7 +11,7 @@ void _fpreset (void)
 #if defined(_ARM_) || defined(__arm__)
   __asm__ __volatile__ (
     "vmsr	fpscr, %0\n\t" : : "r"(0 /* INITIAL_FPSCR */));
-#elif defined(_ARM64_) || defined(__aarch64__)
+#elif defined(_ARM64_) || defined(__aarch64__) || defined(__arm64ec__)
   __asm__ __volatile__ (
     "msr	fpcr, %0\n\t" : : "r"(0LL /* INITIAL_FPSCR */));
 #else
