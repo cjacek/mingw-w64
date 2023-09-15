@@ -27,13 +27,18 @@ CPPFLAGS32=-m32 -masm=att
 CPPFLAGS64=-m64 -masm=att
 AM_DLLTOOLFLAGS=-k --as=$(AS) --output-lib $@
 DLLTOOLFLAGSARM32=-m arm
-DLLTOOLFLAGSARM64=-m arm64
+if ARM64EC
+    DLLTOOLFLAGSARM64=-m arm64ec
+else
+    DLLTOOLFLAGSARM64=-m arm64
+endif
 DLLTOOLFLAGS32=--as-flags=--32 -m i386
 DLLTOOLFLAGS64=--as-flags=--64 -m i386:x86-64
 DTDEFARM32=$(DLLTOOL) $(DLLTOOLFLAGSARM32) $(AM_DLLTOOLFLAGS) --input-def
 DTDEFARM64=$(DLLTOOL) $(DLLTOOLFLAGSARM64) $(AM_DLLTOOLFLAGS) --input-def
 DTDEF32=$(DLLTOOL) $(DLLTOOLFLAGS32) $(AM_DLLTOOLFLAGS) --input-def
 DTDEF64=$(DLLTOOL) $(DLLTOOLFLAGS64) $(AM_DLLTOOLFLAGS) --input-def
+
 if DLLTOOL_HAS_TEMP_PREFIX
   AM_DLLTOOLFLAGS += --temp-prefix $(basename $@)
 endif
@@ -994,10 +999,16 @@ src_libmingwex=\
   stdio/vsnprintf.c        stdio/vsnwprintf.c \
   stdio/wtoll.c            stdio/mingw_asprintf.c    stdio/mingw_vasprintf.c
 
-# Include the default load config struct only for Control Flow Guard support.
+# Include the default load config struct only for Control Flow Guard support or ARM64EC.
+if ARM64EC
+src_libmingwex+=\
+  cfguard/mingw_cfguard_loadcfg.S \
+  misc/mingw_arm64ec_support.S
+else
 if CFGUARD
 src_libmingwex+=\
   cfguard/mingw_cfguard_loadcfg.S
+endif
 endif
 
 # these go into both 32 and 64 bit x86 versions:
