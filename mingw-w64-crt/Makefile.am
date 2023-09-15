@@ -998,12 +998,12 @@ src_libmingwex=\
 # Include the default load config struct only for Control Flow Guard support or ARM64EC.
 if ARM64EC
 src_libmingwex+=\
-  cfguard/mingw_cfguard_loadcfg.S \
+  misc/mingw_loadcfg.S \
   misc/mingw_arm64ec_support.S
 else
 if CFGUARD
 src_libmingwex+=\
-  cfguard/mingw_cfguard_loadcfg.S
+  misc/mingw_loadcfg.S
 endif
 endif
 
