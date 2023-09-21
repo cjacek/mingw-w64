@@ -101,7 +101,7 @@
      /* As we have to support older gcc version, which are using underscores
       as symbol prefix for x64, we have to check here for the user label
       prefix defined by gcc. */
-#    ifdef __USER_LABEL_PREFIX__
+#    if defined(__USER_LABEL_PREFIX__)
 #      pragma push_macro ("_")
 #      undef _
 #      define _ 1
@@ -122,10 +122,23 @@
 #  define __MINGW_USE_UNDERSCORE_PREFIX 1
 #endif /* ifndef _X86_ */
 
+#define __GLUE(x, y) x##y
+#define __MINGW64_GLUE(x, y) __GLUE(x, y)
+#define __HASH #
+
 #if __MINGW_USE_UNDERSCORE_PREFIX == 0
 #  define __MINGW_IMP_SYMBOL(sym) __imp_##sym
 #  define __MINGW_IMP_LSYMBOL(sym) __imp_##sym
-#  define __MINGW_USYMBOL(sym) sym
+#  ifdef _ARM64EC_
+#    ifdef __ASSEMBLER__
+#      define __MINGW_USYMBOL(sym) \
+         __MINGW64_STRINGIFY(__MINGW64_GLUE(__HASH, sym))
+#    else
+#      define __MINGW_USYMBOL(sym) "#" __MINGW64_STRINGIFY(sym)
+#    endif
+#  else
+#    define __MINGW_USYMBOL(sym) sym
+#  endif
 #  define __MINGW_LSYMBOL(sym) _##sym
 #else /* ! if __MINGW_USE_UNDERSCORE_PREFIX == 0 */
 #  define __MINGW_IMP_SYMBOL(sym) _imp__##sym
@@ -134,7 +147,16 @@
 #  define __MINGW_LSYMBOL(sym) sym
 #endif /* if __MINGW_USE_UNDERSCORE_PREFIX == 0 */
 
+
+#ifdef _ARM64EC_
+/* USYMBOL implictly stringifies on ARM64EC since assembler directives cannot
+otherwise begin with a '#' */
+#define __MINGW_ASM_CALL(func) __asm__(__MINGW_USYMBOL(func))
+#else
 #define __MINGW_ASM_CALL(func) __asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(func)))
+
+#endif
+
 #define __MINGW_ASM_CRT_CALL(func) __asm__(__STRINGIFY(func))
 
 #ifndef __PTRDIFF_TYPE__
