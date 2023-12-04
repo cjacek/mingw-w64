@@ -152,6 +152,7 @@ libarm64_DATA += %reldir%/libipnathlp.a
 libarm64_DATA += %reldir%/libjsproxy.a
 libarm64_DATA += %reldir%/libkdcom.a
 #libarm64_DATA += %reldir%/libkernel32.a  # Handled by custom rule
+libarm64_DATA += %reldir%/libkernelbase.a
 libarm64_DATA += %reldir%/libkeymgr.a
 libarm64_DATA += %reldir%/libks.a
 libarm64_DATA += %reldir%/libksecdd.a
