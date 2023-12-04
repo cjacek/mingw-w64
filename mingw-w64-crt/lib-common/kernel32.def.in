@@ -1322,7 +1322,6 @@ RtlCopyMemory
 RtlDeleteFunctionTable
 RtlFillMemory
 RtlInstallFunctionTableCallback
-RtlIsEcCode
 RtlLookupFunctionEntry
 RtlMoveMemory
 RtlPcToFileHeader
@@ -1332,6 +1331,7 @@ RtlUnwind
 RtlUnwindEx
 RtlVirtualUnwind
 RtlVirtualUnwind2
+RtlIsEcCode
 RtlZeroMemory
 ScrollConsoleScreenBufferA
 ScrollConsoleScreenBufferW
