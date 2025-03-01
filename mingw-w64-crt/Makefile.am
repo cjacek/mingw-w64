@@ -928,6 +928,7 @@ src_msvcr120_app=\
 
 # These mingwex sources are target independent:
 src_libmingwex=\
+  crt/loadcfg.S \
   cfguard/mingw_cfguard_support.c \
   \
   misc/dllmain.c \
@@ -1014,12 +1015,6 @@ src_libmingwex=\
   stdio/ulltoa.c           stdio/ulltow.c            stdio/vasprintf.c \
   stdio/vsnprintf.c        stdio/vsnwprintf.c \
   stdio/wtoll.c            stdio/mingw_asprintf.c    stdio/mingw_vasprintf.c
-
-# Include the default load config struct only for Control Flow Guard support.
-if CFGUARD
-src_libmingwex+=\
-  cfguard/mingw_cfguard_loadcfg.S
-endif
 
 # these go into both 32 and 64 bit x86 versions:
 src_libmingwex_x86=\
