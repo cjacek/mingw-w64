@@ -105,3 +105,8 @@ static _CRTALLOC(".CRT$XLD") PIMAGE_TLS_CALLBACK __xl_d = __dyn_tls_dtor;
 /* Force tlssup.c (_tls_used symbol for .tls linker section) to be linked.  */
 extern const IMAGE_TLS_DIRECTORY _tls_used;
 static __attribute__((used)) const IMAGE_TLS_DIRECTORY *const _include_tls_used = &_tls_used;
+
+#ifdef __arm64ec__
+asm( ".section .drectve,\"yn\"\n"
+     ".ascii \"-arm64xsameaddress:__dyn_tls_dtor\"\n" );
+#endif
