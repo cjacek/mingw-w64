@@ -108,7 +108,7 @@ host_triplet = @host@
 @DELAY_IMPORT_LIBS_TRUE@am__append_5 = --output-delaylib $(basename $@).delayimp.a
 @ARM64EC_TRUE@am__append_6 = math/fabsf.c
 @ARM64EC_TRUE@am__append_7 = math/fabsf.c
-@ARM64EC_TRUE@am__append_8 = crt/chpe.S
+@ARM64EC_TRUE@am__append_8 = crt/chpe.S crt/arm64ec_icall.S
 @LIB32_TRUE@@W32API_FALSE@am__append_9 = lib32/libmsvcrt.a \
 @LIB32_TRUE@@W32API_FALSE@	lib32/libmsvcrt-os.a
 @LIB32_TRUE@@W32API_FALSE@am__append_10 = lib32/libdelayimp.a \
@@ -7262,13 +7262,13 @@ am__libarm64_libmingwex_a_SOURCES_DIST = crt/loadcfg.S \
 	stdio/vsnwprintf.c stdio/wtoll.c stdio/mingw_asprintf.c \
 	stdio/mingw_vasprintf.c math/sincos.c math/sincosf.c \
 	math/arm-common/sincosl.c math/arm64/rint.c math/arm64/rintf.c \
-	math/arm-common/ldexpl.c crt/chpe.S math/DFP/dfp_internal.h \
-	math/DFP/__fpclassifyd32.c math/DFP/__fpclassifyd64.c \
-	math/DFP/__fpclassifyd128.c math/DFP/__isnand32.c \
-	math/DFP/__isnand64.c math/DFP/__isnand128.c \
-	math/DFP/__signbitd32.c math/DFP/__signbitd64.c \
-	math/DFP/__signbitd128.c math/DFP/isinfd32.c \
-	math/DFP/isinfd64.c math/DFP/isinfd128.c
+	math/arm-common/ldexpl.c crt/chpe.S crt/arm64ec_icall.S \
+	math/DFP/dfp_internal.h math/DFP/__fpclassifyd32.c \
+	math/DFP/__fpclassifyd64.c math/DFP/__fpclassifyd128.c \
+	math/DFP/__isnand32.c math/DFP/__isnand64.c \
+	math/DFP/__isnand128.c math/DFP/__signbitd32.c \
+	math/DFP/__signbitd64.c math/DFP/__signbitd128.c \
+	math/DFP/isinfd32.c math/DFP/isinfd64.c math/DFP/isinfd128.c
 am__objects_347 = crt/libarm64_libmingwex_a-loadcfg.$(OBJEXT) \
 	cfguard/libarm64_libmingwex_a-mingw_cfguard_support.$(OBJEXT) \
 	misc/libarm64_libmingwex_a-dllmain.$(OBJEXT) \
@@ -7535,7 +7535,8 @@ am__objects_347 = crt/libarm64_libmingwex_a-loadcfg.$(OBJEXT) \
 	stdio/libarm64_libmingwex_a-mingw_asprintf.$(OBJEXT) \
 	stdio/libarm64_libmingwex_a-mingw_vasprintf.$(OBJEXT)
 @ARM64EC_TRUE@am__objects_348 =  \
-@ARM64EC_TRUE@	crt/libarm64_libmingwex_a-chpe.$(OBJEXT)
+@ARM64EC_TRUE@	crt/libarm64_libmingwex_a-chpe.$(OBJEXT) \
+@ARM64EC_TRUE@	crt/libarm64_libmingwex_a-arm64ec_icall.$(OBJEXT)
 am__objects_349 = math/libarm64_libmingwex_a-sincos.$(OBJEXT) \
 	math/libarm64_libmingwex_a-sincosf.$(OBJEXT) \
 	math/arm-common/libarm64_libmingwex_a-sincosl.$(OBJEXT) \
@@ -8670,6 +8671,7 @@ am__depfiles_remade = ./$(DEPDIR)/lib32_libm_a-_libm_dummy.Po \
 	crt/$(DEPDIR)/libarm64_libmingw32_a-xncommod.Po \
 	crt/$(DEPDIR)/libarm64_libmingw32_a-xthdloc.Po \
 	crt/$(DEPDIR)/libarm64_libmingw32_a-xtxtmode.Po \
+	crt/$(DEPDIR)/libarm64_libmingwex_a-arm64ec_icall.Po \
 	crt/$(DEPDIR)/libarm64_libmingwex_a-chpe.Po \
 	crt/$(DEPDIR)/libarm64_libmingwex_a-loadcfg.Po \
 	ctype/$(DEPDIR)/lib32_libcrtdll_extra_a-__iswcsym.Po \
@@ -27161,6 +27163,8 @@ math/arm-common/libarm64_libmingwex_a-ldexpl.$(OBJEXT):  \
 	math/arm-common/$(DEPDIR)/$(am__dirstamp)
 crt/libarm64_libmingwex_a-chpe.$(OBJEXT): crt/$(am__dirstamp) \
 	crt/$(DEPDIR)/$(am__dirstamp)
+crt/libarm64_libmingwex_a-arm64ec_icall.$(OBJEXT):  \
+	crt/$(am__dirstamp) crt/$(DEPDIR)/$(am__dirstamp)
 math/DFP/libarm64_libmingwex_a-__fpclassifyd32.$(OBJEXT):  \
 	math/DFP/$(am__dirstamp) math/DFP/$(DEPDIR)/$(am__dirstamp)
 math/DFP/libarm64_libmingwex_a-__fpclassifyd64.$(OBJEXT):  \
@@ -28602,6 +28606,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@crt/$(DEPDIR)/libarm64_libmingw32_a-xncommod.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@crt/$(DEPDIR)/libarm64_libmingw32_a-xthdloc.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@crt/$(DEPDIR)/libarm64_libmingw32_a-xtxtmode.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@crt/$(DEPDIR)/libarm64_libmingwex_a-arm64ec_icall.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@crt/$(DEPDIR)/libarm64_libmingwex_a-chpe.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@crt/$(DEPDIR)/libarm64_libmingwex_a-loadcfg.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@ctype/$(DEPDIR)/lib32_libcrtdll_extra_a-__iswcsym.Po@am__quote@ # am--include-marker
@@ -34796,6 +34801,20 @@ crt/libarm64_libmingwex_a-chpe.obj: crt/chpe.S
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS)source='crt/chpe.S' object='crt/libarm64_libmingwex_a-chpe.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libarm64_libmingwex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o crt/libarm64_libmingwex_a-chpe.obj `if test -f 'crt/chpe.S'; then $(CYGPATH_W) 'crt/chpe.S'; else $(CYGPATH_W) '$(srcdir)/crt/chpe.S'; fi`
+
+crt/libarm64_libmingwex_a-arm64ec_icall.o: crt/arm64ec_icall.S
+@am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libarm64_libmingwex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT crt/libarm64_libmingwex_a-arm64ec_icall.o -MD -MP -MF crt/$(DEPDIR)/libarm64_libmingwex_a-arm64ec_icall.Tpo -c -o crt/libarm64_libmingwex_a-arm64ec_icall.o `test -f 'crt/arm64ec_icall.S' || echo '$(srcdir)/'`crt/arm64ec_icall.S
+@am__fastdepCCAS_TRUE@	$(AM_V_at)$(am__mv) crt/$(DEPDIR)/libarm64_libmingwex_a-arm64ec_icall.Tpo crt/$(DEPDIR)/libarm64_libmingwex_a-arm64ec_icall.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS)source='crt/arm64ec_icall.S' object='crt/libarm64_libmingwex_a-arm64ec_icall.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libarm64_libmingwex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o crt/libarm64_libmingwex_a-arm64ec_icall.o `test -f 'crt/arm64ec_icall.S' || echo '$(srcdir)/'`crt/arm64ec_icall.S
+
+crt/libarm64_libmingwex_a-arm64ec_icall.obj: crt/arm64ec_icall.S
+@am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libarm64_libmingwex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT crt/libarm64_libmingwex_a-arm64ec_icall.obj -MD -MP -MF crt/$(DEPDIR)/libarm64_libmingwex_a-arm64ec_icall.Tpo -c -o crt/libarm64_libmingwex_a-arm64ec_icall.obj `if test -f 'crt/arm64ec_icall.S'; then $(CYGPATH_W) 'crt/arm64ec_icall.S'; else $(CYGPATH_W) '$(srcdir)/crt/arm64ec_icall.S'; fi`
+@am__fastdepCCAS_TRUE@	$(AM_V_at)$(am__mv) crt/$(DEPDIR)/libarm64_libmingwex_a-arm64ec_icall.Tpo crt/$(DEPDIR)/libarm64_libmingwex_a-arm64ec_icall.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS)source='crt/arm64ec_icall.S' object='crt/libarm64_libmingwex_a-arm64ec_icall.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libarm64_libmingwex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o crt/libarm64_libmingwex_a-arm64ec_icall.obj `if test -f 'crt/arm64ec_icall.S'; then $(CYGPATH_W) 'crt/arm64ec_icall.S'; else $(CYGPATH_W) '$(srcdir)/crt/arm64ec_icall.S'; fi`
 
 stdio/libarm64_libmsvcrt_extra_a-scanf.o: stdio/scanf.S
 @am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libarm64_libmsvcrt_extra_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT stdio/libarm64_libmsvcrt_extra_a-scanf.o -MD -MP -MF stdio/$(DEPDIR)/libarm64_libmsvcrt_extra_a-scanf.Tpo -c -o stdio/libarm64_libmsvcrt_extra_a-scanf.o `test -f 'stdio/scanf.S' || echo '$(srcdir)/'`stdio/scanf.S
@@ -101266,6 +101285,7 @@ distclean: distclean-recursive
 	-rm -f crt/$(DEPDIR)/libarm64_libmingw32_a-xncommod.Po
 	-rm -f crt/$(DEPDIR)/libarm64_libmingw32_a-xthdloc.Po
 	-rm -f crt/$(DEPDIR)/libarm64_libmingw32_a-xtxtmode.Po
+	-rm -f crt/$(DEPDIR)/libarm64_libmingwex_a-arm64ec_icall.Po
 	-rm -f crt/$(DEPDIR)/libarm64_libmingwex_a-chpe.Po
 	-rm -f crt/$(DEPDIR)/libarm64_libmingwex_a-loadcfg.Po
 	-rm -f ctype/$(DEPDIR)/lib32_libcrtdll_extra_a-__iswcsym.Po
@@ -106120,6 +106140,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f crt/$(DEPDIR)/libarm64_libmingw32_a-xncommod.Po
 	-rm -f crt/$(DEPDIR)/libarm64_libmingw32_a-xthdloc.Po
 	-rm -f crt/$(DEPDIR)/libarm64_libmingw32_a-xtxtmode.Po
+	-rm -f crt/$(DEPDIR)/libarm64_libmingwex_a-arm64ec_icall.Po
 	-rm -f crt/$(DEPDIR)/libarm64_libmingwex_a-chpe.Po
 	-rm -f crt/$(DEPDIR)/libarm64_libmingwex_a-loadcfg.Po
 	-rm -f ctype/$(DEPDIR)/lib32_libcrtdll_extra_a-__iswcsym.Po
